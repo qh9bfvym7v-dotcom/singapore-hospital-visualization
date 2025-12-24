@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheel Game - Help Me Decide What to Eat Today</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px dashed #ff7676;
+        }
+        
+        h1 {
+            color: #ff6b6b;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0px rgba(255, 107, 107, 0.2);
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: #666;
+            font-style: italic;
+        }
+        
+        h2 {
+            color: #ff9a76;
+            margin: 30px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ffeaa7;
+            font-size: 1.8rem;
+        }
+        
+        h3 {
+            color: #fd9644;
+            margin: 20px 0 10px;
+            font-size: 1.4rem;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .visual-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 40px 0;
+            justify-content: center;
+        }
+        
+        .visual-item {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 2px solid #ffeaa7;
+            transition: transform 0.3s ease;
+        }
+        
+        .visual-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .visual-title {
+            font-size: 1.3rem;
+            color: #ff9a76;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .wheel-container {
+            width: 100%;
+            height: 350px;
+            position: relative;
+            margin: 20px auto;
+        }
+        
+        .wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            overflow: hidden;
+            box-shadow: 0 0 0 10px #ffd8a6, 0 0 20px rgba(0, 0, 0, 0.2);
+            transition: transform 3s cubic-bezier(0.2, 0.8, 0.3, 1);
+        }
+        
+        .wheel-center {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #2d3436;
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+        }
+        
+        .wheel-pointer {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            color: #ff6b6b;
+            font-size: 40px;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .wheel-section {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: bottom right;
+            left: 0;
+            top: 0;
+            background: #ff7676;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .wheel-text {
+            position: absolute;
+            transform-origin: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-size: 16px;
+            width: 100%;
+            text-align: center;
+            padding-top: 20px;
+            padding-right: 60px;
+        }
+        
+        .result-display {
+            background: #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #d63031;
+            border: 2px dashed #fdcb6e;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .spin-button {
+            background: linear-gradient(135deg, #ff6b6b, #ff9a76);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+        
+        .spin-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+        }
+        
+        .spin-button:active {
+            transform: translateY(1px);
+        }
+        
+        .spin-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .food-item {
+            display: inline-block;
+            background: #ff9a76;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 1.1rem;
+        }
+        
+        .cooking-method {
+            display: inline-block;
+            background: #74b9ff;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 1.1rem;
+        }
+        
+        .map-preview {
+            width: 100%;
+            height: 300px;
+            background: #dfe6e9;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            border: 2px solid #b2bec3;
+        }
+        
+        .map-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #636e72;
+            font-style: italic;
+            background: linear-gradient(45deg, #f8f9fa 25%, #e9ecef 25%, #e9ecef 50%, #f8f9fa 50%, #f8f9fa 75%, #e9ecef 75%, #e9ecef);
+            background-size: 20px 20px;
+        }
+        
+        .final-result {
+            background: linear-gradient(135deg, #ff9a76, #74b9ff);
+            color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            border: 3px dashed white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .action-button {
+            background: #55efc4;
+            color: #2d3436;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(85, 239, 196, 0.4);
+        }
+        
+        /* 新增筛选面板样式 */
+        .filter-panel {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid #ffeaa7;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .filter-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .filter-section:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .filter-title {
+            color: #ff9a76;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .filter-title i {
+            margin-right: 10px;
+        }
+        
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .filter-option {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .filter-option:hover {
+            border-color: #ff9a76;
+        }
+        
+        .filter-option.selected {
+            background: #ff9a76;
+            color: white;
+            border-color: #ff9a76;
+        }
+        
+        .filter-option input {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        
+        .filter-option label {
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+        
+        .filter-tag {
+            display: inline-block;
+            background: #74b9ff;
+            color: white;
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+        
+        .filter-tag.vegetarian {
+            background: #55efc4;
+        }
+        
+        .filter-tag.low-carb {
+            background: #a29bfe;
+        }
+        
+        .filter-tag.high-protein {
+            background: #fd79a8;
+        }
+        
+        .filter-tag.fast-food {
+            background: #fdcb6e;
+        }
+        
+        .filter-tag.healthy {
+            background: #00cec9;
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .filter-button {
+            background: #74b9ff;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-button.apply {
+            background: #55efc4;
+            color: #2d3436;
+        }
+        
+        .filter-button.reset {
+            background: #dfe6e9;
+            color: #636e72;
+        }
+        
+        .filter-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .active-filter {
+            background: #ff9a76;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .remove-filter {
+            background: none;
+            border: none;
+            color: white;
+            margin-left: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        /* 状态指示器 */
+        .filter-status {
+            background: #ffeaa7;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .filter-status span {
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px dashed #ff7676;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .visual-item {
+                min-width: 100%;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            h2 {
+                font-size: 1.6rem;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .wheel {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .wheel-text {
+                font-size: 14px;
+            }
+            
+            .filter-options {
+                justify-content: center;
+            }
+            
+            .filter-actions {
+                justify-content: center;
+            }
+        }
+        
+        /* Animation Effects */
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .spinning {
+            animation: spin 2s linear infinite;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes celebration {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .celebration {
+            animation: celebration 0.5s ease-in-out 3;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Solving Life's Three Biggest Dilemmas</h1>
+            <p class="tagline">Wheel Game - What to eat for breakfast? Lunch? Dinner?</p>
+        </header>
+        
+        <!-- 新增个性化筛选面板 -->
+        <section class="filter-panel fade-in">
+            <h2>Personalized Filter Settings</h2>
+            <p>Customize your food recommendations by setting your dietary preferences and restrictions. Your selections will filter the options in the wheels below.</p>
+            
+            <div class="filter-section">
+                <div class="filter-title">
+                    <i>🥗</i> Dietary Preferences
+                </div>
+                <div class="filter-options" id="diet-preference">
+                    <div class="filter-option" data-value="vegetarian">
+                        <input type="checkbox" id="vegetarian" name="preference" value="vegetarian">
+                        <label for="vegetarian">Vegetarian <span class="filter-tag vegetarian">No Meat</span></label>
+                    </div>
+                    <div class="filter-option" data-value="low-carb">
+                        <input type="checkbox" id="low-carb" name="preference" value="low-carb">
+                        <label for="low-carb">Low-Carb <span class="filter-tag low-carb">Keto</span></label>
+                    </div>
+                    <div class="filter-option" data-value="high-protein">
+                        <input type="checkbox" id="high-protein" name="preference" value="high-protein">
+                        <label for="high-protein">High-Protein <span class="filter-tag high-protein">Muscle</span></label>
+                    </div>
+                    <div class="filter-option" data-value="fast-food">
+                        <input type="checkbox" id="fast-food" name="preference" value="fast-food">
+                        <label for="fast-food">Fast Food <span class="filter-tag fast-food">Quick</span></label>
+                    </div>
+                    <div class="filter-option" data-value="healthy">
+                        <input type="checkbox" id="healthy" name="preference" value="healthy">
+                        <label for="healthy">Healthy <span class="filter-tag healthy">Light</span></label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filter-section">
+                <div class="filter-title">
+                    <i>🚫</i> Dietary Restrictions
+                </div>
+                <div class="filter-options" id="diet-restriction">
+                    <div class="filter-option" data-value="no-spicy">
+                        <input type="checkbox" id="no-spicy" name="restriction" value="no-spicy">
+                        <label for="no-spicy">No Spicy Food</label>
+                    </div>
+                    <div class="filter-option" data-value="no-pork">
+                        <input type="checkbox" id="no-pork" name="restriction" value="no-pork">
+                        <label for="no-pork">No Pork (Religious)</label>
+                    </div>
+                    <div class="filter-option" data-value="no-seafood">
+                        <input type="checkbox" id="no-seafood" name="restriction" value="no-seafood">
+                        <label for="no-seafood">No Seafood (Allergy)</label>
+                    </div>
+                    <div class="filter-option" data-value="no-beef">
+                        <input type="checkbox" id="no-beef" name="restriction" value="no-beef">
+                        <label for="no-beef">No Beef (Religious)</label>
+                    </div>
+                    <div class="filter-option" data-value="gluten-free">
+                        <input type="checkbox" id="gluten-free" name="restriction" value="gluten-free">
+                        <label for="gluten-free">Gluten-Free</label>
+                    </div>
+                    <div class="filter-option" data-value="lactose-free">
+                        <input type="checkbox" id="lactose-free" name="restriction" value="lactose-free">
+                        <label for="lactose-free">Lactose-Free</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filter-actions">
+                <button class="filter-button reset" id="reset-filters">Reset Filters</button>
+                <button class="filter-button apply" id="apply-filters">Apply Filters</button>
+            </div>
+            
+            <div class="filter-status" id="filter-status">
+                <div>Active filters: <span id="active-filter-count">0</span></div>
+                <div>Available ingredients: <span id="available-ingredients">7</span></div>
+                <div>Available methods: <span id="available-methods">6</span></div>
+            </div>
+            
+            <div class="active-filters" id="active-filters">
+                <!-- Active filters will be displayed here -->
+            </div>
+        </section>
+        
+        <section>
+            <h2>Project Concept</h2>
+            <p>This project aims to develop a fun wheel game to help users solve the daily dilemma of "what to eat". By using two wheels to select ingredients and cooking methods respectively, the system generates personalized dish recommendations and further provides suggestions for nearby restaurants.</p>
+            
+            <div class="visual-section">
+                <div class="visual-item">
+                    <div class="visual-title">Ingredients Wheel</div>
+                    <div class="wheel-container">
+                        <div class="wheel" id="ingredient-wheel">
+                            <!-- Ingredient options will be dynamically generated via JavaScript -->
+                        </div>
+                        <div class="wheel-pointer">▲</div>
+                    </div>
+                    <div class="result-display" id="ingredient-result">
+                        Current Selection: <span id="ingredient-selection">Waiting for spin...</span>
+                    </div>
+                    <button class="spin-button" id="spin-ingredient">Spin Ingredients Wheel</button>
+                    <p>Contains various common ingredients, users can spin repeatedly for different combinations</p>
+                </div>
+                
+                <div class="visual-item">
+                    <div class="visual-title">Cooking Methods Wheel</div>
+                    <div class="wheel-container">
+                        <div class="wheel" id="method-wheel">
+                            <!-- Method options will be dynamically generated via JavaScript -->
+                        </div>
+                        <div class="wheel-pointer">▲</div>
+                    </div>
+                    <div class="result-display" id="method-result">
+                        Current Selection: <span id="method-selection">Waiting for spin...</span>
+                    </div>
+                    <button class="spin-button" id="spin-method">Spin Methods Wheel</button>
+                    <p>Provides various cooking methods to combine with ingredients for dish creation</p>
+                </div>
+            </div>
+            
+            <div class="final-result" id="final-recommendation">
+                Please spin both wheels first to get dish recommendations
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-button" id="spin-both">Spin Both Wheels</button>
+                <button class="action-button" id="reset-all">Reset Selection</button>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Functionality Design</h2>
+            <h3>Core Features</h3>
+            <ul>
+                <li><strong>Ingredients Wheel</strong>: Includes chicken, beef, pork, rice, potatoes, vegetables, seafood and other common ingredients</li>
+                <li><strong>Cooking Methods Wheel</strong>: Provides frying, dry-frying, boiling, steaming, roasting, stir-frying and other cooking methods</li>
+                <li><strong>Intelligent Recommendation</strong>: Generates reasonable dish recommendations based on ingredient and method combinations</li>
+                <li><strong>Restaurant Locator</strong>: Recommends nearby restaurants based on dish recommendations using Google Maps and other map services</li>
+            </ul>
+            
+            <h3>Special Features</h3>
+            <ul>
+                <li><strong>Multiple Spins</strong>: Users can spin the wheels repeatedly until they find a satisfactory combination</li>
+                <li><strong>Favorites Function</strong>: Save favorite dish combinations for easy selection next time</li>
+                <li><strong>Personalization Settings</strong>: Adjust recommendations based on user dietary preferences (vegetarian, low-calorie, etc.)</li>
+                <li><strong>Sharing Function</strong>: Share interesting dish combinations on social media</li>
+            </ul>
+            
+            <div class="visual-section">
+                <div class="visual-item">
+                    <div class="visual-title">Dish Recommendation Example</div>
+                    <div id="dish-example" class="result-display" style="font-size: 1.5rem;">
+                        <span class="food-item">Chicken</span> + 
+                        <span class="cooking-method">Frying</span> = 
+                        <strong>Crispy Chicken</strong>
+                    </div>
+                    <p>The system will recommend specific dishes based on reasonable ingredient and method combinations</p>
+                </div>
+                
+                <div class="visual-item">
+                    <div class="visual-title">Nearby Restaurant Recommendations</div>
+                    <div class="map-preview" id="google-maps-container">
+                        <!-- Google Maps embed code -->
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.18379247548!2d-73.98554268459418!3d40.757974679327!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1618335154373!5m2!1sen!2sus" 
+                            width="100%" 
+                            height="100%" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy"
+                            title="Google Maps - Nearby Restaurant Recommendations">
+                        </iframe>
+                    </div>
+                    <p>Displays nearby restaurants related to the recommended dish on the map</p>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>"Help Me Decide What to Eat Today" - Wheel Game Project Proposal</p>
+            <p>© 2023 Food Decision Assistant - Making daily choices fun</p>
+        </footer>
+    </div>
+
+    <script>
+        // 扩展的食材数据库，包含标签
+        const ingredientsData = [
+            { name: 'Chicken', tags: ['meat', 'high-protein'], restrictions: ['no-meat', 'vegetarian'] },
+            { name: 'Beef', tags: ['meat', 'high-protein'], restrictions: ['no-meat', 'vegetarian', 'no-beef'] },
+            { name: 'Pork', tags: ['meat', 'high-protein'], restrictions: ['no-meat', 'vegetarian', 'no-pork'] },
+            { name: 'Rice', tags: ['vegetarian', 'high-carb', 'gluten-free'], restrictions: ['low-carb'] },
+            { name: 'Potato', tags: ['vegetarian', 'high-carb', 'gluten-free'], restrictions: ['low-carb'] },
+            { name: 'Vegetables', tags: ['vegetarian', 'low-carb', 'healthy', 'gluten-free', 'vegan'], restrictions: [] },
+            { name: 'Seafood', tags: ['high-protein', 'low-carb'], restrictions: ['no-seafood', 'vegetarian'] },
+            { name: 'Tofu', tags: ['vegetarian', 'high-protein', 'healthy', 'gluten-free', 'vegan'], restrictions: [] },
+            { name: 'Eggs', tags: ['high-protein', 'vegetarian'], restrictions: ['vegan'] },
+            { name: 'Pasta', tags: ['vegetarian', 'high-carb'], restrictions: ['low-carb', 'gluten-free'] }
+        ];
+        
+        // 扩展的烹饪方法数据库，包含标签
+        const cookingMethodsData = [
+            { name: 'Frying', tags: ['fast-food', 'high-calorie'], restrictions: ['healthy'] },
+            { name: 'Dry-frying', tags: ['fast-food'], restrictions: ['healthy'] },
+            { name: 'Boiling', tags: ['healthy', 'low-calorie'], restrictions: ['fast-food'] },
+            { name: 'Steaming', tags: ['healthy', 'low-calorie'], restrictions: ['fast-food'] },
+            { name: 'Roasting', tags: ['high-calorie'], restrictions: ['fast-food', 'healthy'] },
+            { name: 'Stir-frying', tags: ['fast-food'], restrictions: ['healthy'] },
+            { name: 'Baking', tags: ['healthy'], restrictions: ['fast-food'] },
+            { name: 'Grilling', tags: ['healthy', 'high-protein'], restrictions: ['fast-food'] },
+            { name: 'Slow Cooking', tags: ['healthy'], restrictions: ['fast-food'] }
+        ];
+        
+        // 定义菜品推荐映射
+        const dishRecommendations = {
+            'Chicken-Frying': 'Crispy Chicken',
+            'Chicken-Dry-frying': 'Dry-fried Chicken',
+            'Chicken-Boiling': 'Chicken Soup',
+            'Chicken-Steaming': 'Steamed Chicken',
+            'Chicken-Roasting': 'Roast Chicken',
+            'Chicken-Stir-frying': 'Stir-fried Chicken',
+            'Chicken-Baking': 'Baked Chicken',
+            'Chicken-Grilling': 'Grilled Chicken',
+            'Chicken-Slow Cooking': 'Slow Cooked Chicken',
+            
+            'Beef-Frying': 'Fried Steak',
+            'Beef-Dry-frying': 'Dry-fried Beef',
+            'Beef-Boiling': 'Beef Soup',
+            'Beef-Steaming': 'Steamed Beef',
+            'Beef-Roasting': 'Roast Beef',
+            'Beef-Stir-frying': 'Stir-fried Beef',
+            'Beef-Baking': 'Beef Casserole',
+            'Beef-Grilling': 'Grilled Steak',
+            'Beef-Slow Cooking': 'Slow Cooked Beef',
+            
+            'Pork-Frying': 'Fried Pork Chop',
+            'Pork-Dry-frying': 'Dry-fried Pork',
+            'Pork-Boiling': 'Pork Soup',
+            'Pork-Steaming': 'Steamed Pork',
+            'Pork-Roasting': 'Roast Pork',
+            'Pork-Stir-frying': 'Stir-fried Pork',
+            'Pork-Baking': 'Baked Pork',
+            'Pork-Grilling': 'Grilled Pork',
+            'Pork-Slow Cooking': 'Slow Cooked Pork',
+            
+            'Rice-Frying': 'Fried Rice Balls',
+            'Rice-Dry-frying': 'Dry-fried Rice',
+            'Rice-Boiling': 'Porridge',
+            'Rice-Steaming': 'Steamed Rice',
+            'Rice-Roasting': 'Roast Rice Balls',
+            'Rice-Stir-frying': 'Fried Rice',
+            'Rice-Baking': 'Rice Casserole',
+            'Rice-Slow Cooking': 'Slow Cooked Rice',
+            
+            'Potato-Frying': 'French Fries',
+            'Potato-Dry-frying': 'Dry-fried Potatoes',
+            'Potato-Boiling': 'Boiled Potatoes',
+            'Potato-Steaming': 'Steamed Potatoes',
+            'Potato-Roasting': 'Roast Potatoes',
+            'Potato-Stir-frying': 'Stir-fried Potato Shreds',
+            'Potato-Baking': 'Baked Potatoes',
+            'Potato-Grilling': 'Grilled Potatoes',
+            'Potato-Slow Cooking': 'Slow Cooked Potatoes',
+            
+            'Vegetables-Frying': 'Tempura',
+            'Vegetables-Dry-frying': 'Dry-fried Vegetables',
+            'Vegetables-Boiling': 'Vegetable Soup',
+            'Vegetables-Steaming': 'Steamed Vegetables',
+            'Vegetables-Roasting': 'Roast Vegetables',
+            'Vegetables-Stir-frying': 'Stir-fried Greens',
+            'Vegetables-Baking': 'Baked Vegetables',
+            'Vegetables-Grilling': 'Grilled Vegetables',
+            'Vegetables-Slow Cooking': 'Slow Cooked Vegetables',
+            
+            'Seafood-Frying': 'Fried Fish',
+            'Seafood-Dry-frying': 'Dry-fried Seafood',
+            'Seafood-Boiling': 'Seafood Soup',
+            'Seafood-Steaming': 'Steamed Seafood',
+            'Seafood-Roasting': 'Roast Seafood',
+            'Seafood-Stir-frying': 'Stir-fried Seafood',
+            'Seafood-Baking': 'Baked Fish',
+            'Seafood-Grilling': 'Grilled Seafood',
+            'Seafood-Slow Cooking': 'Slow Cooked Seafood',
+            
+            'Tofu-Frying': 'Fried Tofu',
+            'Tofu-Dry-frying': 'Dry-fried Tofu',
+            'Tofu-Boiling': 'Tofu Soup',
+            'Tofu-Steaming': 'Steamed Tofu',
+            'Tofu-Roasting': 'Roast Tofu',
+            'Tofu-Stir-frying': 'Stir-fried Tofu',
+            'Tofu-Baking': 'Baked Tofu',
+            'Tofu-Grilling': 'Grilled Tofu',
+            'Tofu-Slow Cooking': 'Slow Cooked Tofu',
+            
+            'Eggs-Frying': 'Fried Eggs',
+            'Eggs-Dry-frying': 'Dry-fried Eggs',
+            'Eggs-Boiling': 'Boiled Eggs',
+            'Eggs-Steaming': 'Steamed Eggs',
+            'Eggs-Roasting': 'Roast Eggs',
+            'Eggs-Stir-frying': 'Scrambled Eggs',
+            'Eggs-Baking': 'Baked Eggs',
+            'Eggs-Grilling': 'Grilled Eggs',
+            'Eggs-Slow Cooking': 'Slow Cooked Eggs',
+            
+            'Pasta-Frying': 'Fried Pasta',
+            'Pasta-Dry-frying': 'Dry-fried Pasta',
+            'Pasta-Boiling': 'Boiled Pasta',
+            'Pasta-Steaming': 'Steamed Pasta',
+            'Pasta-Roasting': 'Roast Pasta',
+            'Pasta-Stir-frying': 'Stir-fried Pasta',
+            'Pasta-Baking': 'Baked Pasta',
+            'Pasta-Grilling': 'Grilled Pasta',
+            'Pasta-Slow Cooking': 'Slow Cooked Pasta'
+        };
+        
+        // 定义转盘颜色
+        const ingredientColors = ['#ff7676', '#74b9ff', '#55efc4', '#ffeaa7', '#a29bfe', '#fd79a8', '#00cec9', '#81ecec', '#fab1a0', '#e17055'];
+        const methodColors = ['#ff7676', '#74b9ff', '#55efc4', '#ffeaa7', '#a29bfe', '#fd79a8', '#00cec9', '#81ecec', '#fab1a0'];
+        
+        // 当前选中的食材和方法
+        let currentIngredient = null;
+        let currentMethod = null;
+        
+        // 转盘是否在旋转中
+        let isSpinning = false;
+        
+        // 当前筛选条件
+        let activeFilters = {
+            preferences: [], // 饮食偏好
+            restrictions: [] // 忌口选项
+        };
+        
+        // 过滤后的食材和方法
+        let filteredIngredients = [];
+        let filteredMethods = [];
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载保存的筛选条件
+            loadSavedFilters();
+            
+            // 初始化筛选选项
+            initializeFilterOptions();
+            
+            // 应用默认筛选条件
+            applyFilters();
+            
+            // 为筛选按钮添加事件监听器
+            document.getElementById('apply-filters').addEventListener('click', applyFilters);
+            document.getElementById('reset-filters').addEventListener('click', resetFilters);
+            
+            // 为转盘按钮添加事件监听器
+            document.getElementById('spin-ingredient').addEventListener('click', () => spinWheel('ingredient'));
+            document.getElementById('spin-method').addEventListener('click', () => spinWheel('method'));
+            document.getElementById('spin-both').addEventListener('click', spinBothWheels);
+            document.getElementById('reset-all').addEventListener('click', resetAll);
+            
+            // 为示例菜品添加点击事件
+            document.getElementById('dish-example').addEventListener('click', function() {
+                updateMapBasedOnFood('Chicken', 'Frying');
+            });
+        });
+        
+        // 初始化筛选选项
+        function initializeFilterOptions() {
+            // 为筛选选项添加点击事件
+            const filterOptions = document.querySelectorAll('.filter-option');
+            filterOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    const checkbox = this.querySelector('input[type="checkbox"]');
+                    if (e.target !== checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                        this.classList.toggle('selected', checkbox.checked);
+                    }
+                });
+                
+                // 为复选框添加事件，确保点击复选框时也更新样式
+                const checkbox = option.querySelector('input[type="checkbox"]');
+                checkbox.addEventListener('change', function() {
+                    option.classList.toggle('selected', this.checked);
+                });
+            });
+        }
+        
+        // 应用筛选条件
+        function applyFilters() {
+            // 获取选中的饮食偏好
+            const preferenceCheckboxes = document.querySelectorAll('#diet-preference input[type="checkbox"]:checked');
+            activeFilters.preferences = Array.from(preferenceCheckboxes).map(cb => cb.value);
+            
+            // 获取选中的忌口选项
+            const restrictionCheckboxes = document.querySelectorAll('#diet-restriction input[type="checkbox"]:checked');
+            activeFilters.restrictions = Array.from(restrictionCheckboxes).map(cb => cb.value);
+            
+            // 保存筛选条件到本地存储
+            saveFilters();
+            
+            // 过滤食材
+            filterIngredients();
+            
+            // 过滤烹饪方法
+            filterCookingMethods();
+            
+            // 更新转盘
+            updateWheels();
+            
+            // 更新状态显示
+            updateFilterStatus();
+            
+            // 显示应用成功的提示
+            showFilterAppliedMessage();
+        }
+        
+        // 过滤食材
+        function filterIngredients() {
+            filteredIngredients = ingredientsData.filter(ingredient => {
+                // 检查是否满足饮食偏好
+                if (activeFilters.preferences.length > 0) {
+                    const hasMatchingPreference = activeFilters.preferences.some(pref => {
+                        switch(pref) {
+                            case 'vegetarian':
+                                return ingredient.tags.includes('vegetarian');
+                            case 'low-carb':
+                                return ingredient.tags.includes('low-carb') && !ingredient.tags.includes('high-carb');
+                            case 'high-protein':
+                                return ingredient.tags.includes('high-protein');
+                            case 'fast-food':
+                                // 食材没有fast-food标签，不根据这个过滤
+                                return true;
+                            case 'healthy':
+                                return ingredient.tags.includes('healthy');
+                            default:
+                                return true;
+                        }
+                    });
+                    
+                    if (!hasMatchingPreference) return false;
+                }
+                
+                // 检查是否违反忌口选项
+                if (activeFilters.restrictions.length > 0) {
+                    const hasRestriction = activeFilters.restrictions.some(restriction => {
+                        switch(restriction) {
+                            case 'no-spicy':
+                                // 辣味不是食材属性，这里不根据这个过滤
+                                return false;
+                            case 'no-pork':
+                                return ingredient.restrictions.includes('no-pork');
+                            case 'no-seafood':
+                                return ingredient.restrictions.includes('no-seafood');
+                            case 'no-beef':
+                                return ingredient.restrictions.includes('no-beef');
+                            case 'gluten-free':
+                                return ingredient.tags.includes('gluten-free') || !ingredient.name.includes('Pasta');
+                            case 'lactose-free':
+                                // 食材不含乳糖，这里不根据这个过滤
+                                return false;
+                            default:
+                                return false;
+                        }
+                    });
+                    
+                    if (hasRestriction) return false;
+                }
+                
+                // 如果选择了素食，过滤掉所有肉类
+                if (activeFilters.preferences.includes('vegetarian') && 
+                    (ingredient.name === 'Chicken' || ingredient.name === 'Beef' || ingredient.name === 'Pork')) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            // 如果过滤后没有食材，则显示所有食材
+            if (filteredIngredients.length === 0) {
+                filteredIngredients = ingredientsData;
+            }
+        }
+        
+        // 过滤烹饪方法
+        function filterCookingMethods() {
+            filteredMethods = cookingMethodsData.filter(method => {
+                // 检查是否满足饮食偏好
+                if (activeFilters.preferences.length > 0) {
+                    const hasMatchingPreference = activeFilters.preferences.some(pref => {
+                        switch(pref) {
+                            case 'vegetarian':
+                                // 烹饪方法与素食无关
+                                return true;
+                            case 'low-carb':
+                                // 烹饪方法与低碳水无关
+                                return true;
+                            case 'high-protein':
+                                return method.tags.includes('high-protein');
+                            case 'fast-food':
+                                return method.tags.includes('fast-food');
+                            case 'healthy':
+                                return method.tags.includes('healthy');
+                            default:
+                                return true;
+                        }
+                    });
+                    
+                    if (!hasMatchingPreference) return false;
+                }
+                
+                // 检查是否违反忌口选项
+                if (activeFilters.restrictions.length > 0) {
+                    const hasRestriction = activeFilters.restrictions.some(restriction => {
+                        switch(restriction) {
+                            case 'no-spicy':
+                                // 辣味不是烹饪方法属性
+                                return false;
+                            default:
+                                return false;
+                        }
+                    });
+                    
+                    if (hasRestriction) return false;
+                }
+                
+                // 如果选择了健康选项，过滤掉不健康的烹饪方法
+                if (activeFilters.preferences.includes('healthy') && method.restrictions.includes('healthy')) {
+                    return false;
+                }
+                
+                // 如果选择了快餐选项，过滤掉慢速烹饪方法
+                if (activeFilters.preferences.includes('fast-food') && method.restrictions.includes('fast-food')) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            // 如果过滤后没有烹饪方法，则显示所有烹饪方法
+            if (filteredMethods.length === 0) {
+                filteredMethods = cookingMethodsData;
+            }
+        }
+        
+        // 更新转盘
+        function updateWheels() {
+            // 创建食材转盘
+            createWheel('ingredient-wheel', filteredIngredients.map(i => i.name), ingredientColors.slice(0, filteredIngredients.length));
+            
+            // 创建烹饪方法转盘
+            createWheel('method-wheel', filteredMethods.map(m => m.name), methodColors.slice(0, filteredMethods.length));
+            
+            // 重置当前选择
+            currentIngredient = null;
+            currentMethod = null;
+            document.getElementById('ingredient-selection').textContent = 'Waiting for spin...';
+            document.getElementById('method-selection').textContent = 'Waiting for spin...';
+            document.getElementById('final-recommendation').innerHTML = 'Please spin both wheels first to get dish recommendations';
+        }
+        
+        // 创建转盘函数
+        function createWheel(wheelId, options, colors) {
+            const wheel = document.getElementById(wheelId);
+            wheel.innerHTML = '';
+            
+            const anglePerSection = 360 / options.length;
+            
+            // 创建扇形部分
+            for (let i = 0; i < options.length; i++) {
+                const section = document.createElement('div');
+                section.className = 'wheel-section';
+                section.dataset.index = i;
+                section.dataset.value = options[i];
+                
+                // 设置扇形角度
+                const startAngle = i * anglePerSection;
+                
+                // 设置扇形背景颜色
+                section.style.background = colors[i];
+                
+                // 旋转扇形到正确位置
+                section.style.transform = `rotate(${startAngle}deg)`;
+                
+                // 添加文本
+                const textDiv = document.createElement('div');
+                textDiv.className = 'wheel-text';
+                textDiv.textContent = options[i];
+                
+                section.appendChild(textDiv);
+                wheel.appendChild(section);
+            }
+            
+            // 添加中心点
+            const center = document.createElement('div');
+            center.className = 'wheel-center';
+            center.addEventListener('click', () => {
+                if (wheelId === 'ingredient-wheel') {
+                    spinWheel('ingredient');
+                } else {
+                    spinWheel('method');
+                }
+            });
+            wheel.appendChild(center);
+        }
+        
+        // 更新筛选状态显示
+        function updateFilterStatus() {
+            // 更新活动筛选器数量
+            const totalFilters = activeFilters.preferences.length + activeFilters.restrictions.length;
+            document.getElementById('active-filter-count').textContent = totalFilters;
+            
+            // 更新可用食材和方法数量
+            document.getElementById('available-ingredients').textContent = filteredIngredients.length;
+            document.getElementById('available-methods').textContent = filteredMethods.length;
+            
+            // 更新活动筛选器显示
+            const activeFiltersContainer = document.getElementById('active-filters');
+            activeFiltersContainer.innerHTML = '';
+            
+            // 添加饮食偏好筛选器
+            activeFilters.preferences.forEach(pref => {
+                const filterElement = document.createElement('div');
+                filterElement.className = 'active-filter';
+                filterElement.innerHTML = `
+                    ${getFilterLabel(pref)}
+                    <button class="remove-filter" data-type="preference" data-value="${pref}">×</button>
+                `;
+                activeFiltersContainer.appendChild(filterElement);
+            });
+            
+            // 添加忌口选项筛选器
+            activeFilters.restrictions.forEach(restriction => {
+                const filterElement = document.createElement('div');
+                filterElement.className = 'active-filter';
+                filterElement.innerHTML = `
+                    ${getFilterLabel(restriction)}
+                    <button class="remove-filter" data-type="restriction" data-value="${restriction}">×</button>
+                `;
+                activeFiltersContainer.appendChild(filterElement);
+            });
+            
+            // 为删除按钮添加事件监听器
+            document.querySelectorAll('.remove-filter').forEach(button => {
+                button.addEventListener('click', function() {
+                    const type = this.dataset.type;
+                    const value = this.dataset.value;
+                    
+                    // 从活动筛选中移除
+                    if (type === 'preference') {
+                        activeFilters.preferences = activeFilters.preferences.filter(p => p !== value);
+                        // 取消选中对应的复选框
+                        const checkbox = document.querySelector(`#diet-preference input[value="${value}"]`);
+                        if (checkbox) checkbox.checked = false;
+                        const option = checkbox.closest('.filter-option');
+                        if (option) option.classList.remove('selected');
+                    } else {
+                        activeFilters.restrictions = activeFilters.restrictions.filter(r => r !== value);
+                        // 取消选中对应的复选框
+                        const checkbox = document.querySelector(`#diet-restriction input[value="${value}"]`);
+                        if (checkbox) checkbox.checked = false;
+                        const option = checkbox.closest('.filter-option');
+                        if (option) option.classList.remove('selected');
+                    }
+                    
+                    // 重新应用筛选条件
+                    applyFilters();
+                });
+            });
+        }
+        
+        // 获取筛选器标签
+        function getFilterLabel(filterValue) {
+            const labels = {
+                'vegetarian': 'Vegetarian',
+                'low-carb': 'Low-Carb',
+                'high-protein': 'High-Protein',
+                'fast-food': 'Fast Food',
+                'healthy': 'Healthy',
+                'no-spicy': 'No Spicy',
+                'no-pork': 'No Pork',
+                'no-seafood': 'No Seafood',
+                'no-beef': 'No Beef',
+                'gluten-free': 'Gluten-Free',
+                'lactose-free': 'Lactose-Free'
+            };
+            
+            return labels[filterValue] || filterValue;
+        }
+        
+        // 显示筛选应用成功的消息
+        function showFilterAppliedMessage() {
+            const filterStatus = document.getElementById('filter-status');
+            filterStatus.classList.add('pulse');
+            setTimeout(() => {
+                filterStatus.classList.remove('pulse');
+            }, 1000);
+        }
+        
+        // 重置筛选条件
+        function resetFilters() {
+            // 取消所有复选框的选中状态
+            document.querySelectorAll('.filter-option input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // 移除所有选中样式
+            document.querySelectorAll('.filter-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // 重置活动筛选器
+            activeFilters = {
+                preferences: [],
+                restrictions: []
+            };
+            
+            // 清除本地存储
+            localStorage.removeItem('foodWheelFilters');
+            
+            // 应用筛选条件（将显示所有选项）
+            applyFilters();
+        }
+        
+        // 保存筛选条件到本地存储
+        function saveFilters() {
+            localStorage.setItem('foodWheelFilters', JSON.stringify(activeFilters));
+        }
+        
+        // 从本地存储加载筛选条件
+        function loadSavedFilters() {
+            const savedFilters = localStorage.getItem('foodWheelFilters');
+            if (savedFilters) {
+                activeFilters = JSON.parse(savedFilters);
+                
+                // 恢复复选框状态
+                activeFilters.preferences.forEach(pref => {
+                    const checkbox = document.querySelector(`#diet-preference input[value="${pref}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                        const option = checkbox.closest('.filter-option');
+                        if (option) option.classList.add('selected');
+                    }
+                });
+                
+                activeFilters.restrictions.forEach(restriction => {
+                    const checkbox = document.querySelector(`#diet-restriction input[value="${restriction}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                        const option = checkbox.closest('.filter-option');
+                        if (option) option.classList.add('selected');
+                    }
+                });
+            }
+        }
+        
+        // 旋转转盘函数
+        function spinWheel(type) {
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            const wheelId = type === 'ingredient' ? 'ingredient-wheel' : 'method-wheel';
+            const wheel = document.getElementById(wheelId);
+            const spinButton = type === 'ingredient' ? 
+                document.getElementById('spin-ingredient') : 
+                document.getElementById('spin-method');
+            
+            // 禁用按钮
+            spinButton.disabled = true;
+            document.getElementById('spin-both').disabled = true;
+            
+            // 随机选择结果
+            const options = type === 'ingredient' ? filteredIngredients.map(i => i.name) : filteredMethods.map(m => m.name);
+            const randomIndex = Math.floor(Math.random() * options.length);
+            const selectedOption = options[randomIndex];
+            
+            // 计算旋转角度 - 确保指针指向选中的选项
+            const anglePerSection = 360 / options.length;
+            
+            // 计算选中选项的中心角度
+            const selectedAngleCenter = randomIndex * anglePerSection + anglePerSection / 2;
+            
+            // 指针指向0度，我们希望选中的选项旋转到指针位置
+            const fullTurns = 5; // 至少5圈
+            const targetAngle = fullTurns * 360 + (360 - selectedAngleCenter);
+            
+            // 应用旋转动画
+            wheel.style.transition = 'transform 3s cubic-bezier(0.2, 0.8, 0.3, 1)';
+            wheel.style.transform = `translate(-50%, -50%) rotate(${targetAngle}deg)`;
+            
+            // 更新结果显示
+            setTimeout(() => {
+                const resultSpan = type === 'ingredient' ? 
+                    document.getElementById('ingredient-selection') : 
+                    document.getElementById('method-selection');
+                
+                resultSpan.textContent = selectedOption;
+                
+                if (type === 'ingredient') {
+                    currentIngredient = selectedOption;
+                } else {
+                    currentMethod = selectedOption;
+                }
+                
+                // 启用按钮
+                spinButton.disabled = false;
+                document.getElementById('spin-both').disabled = false;
+                isSpinning = false;
+                
+                // 更新最终推荐
+                updateFinalRecommendation();
+                
+                // 添加庆祝动画
+                const resultDisplay = type === 'ingredient' ? 
+                    document.getElementById('ingredient-result') : 
+                    document.getElementById('method-result');
+                resultDisplay.classList.add('celebration');
+                setTimeout(() => resultDisplay.classList.remove('celebration'), 1500);
+            }, 3000);
+        }
+        
+        // 同时旋转两个转盘
+        function spinBothWheels() {
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            
+            // 禁用所有按钮
+            document.getElementById('spin-ingredient').disabled = true;
+            document.getElementById('spin-method').disabled = true;
+            document.getElementById('spin-both').disabled = true;
+            
+            // 随机选择结果
+            const ingredientOptions = filteredIngredients.map(i => i.name);
+            const methodOptions = filteredMethods.map(m => m.name);
+            
+            const ingredientIndex = Math.floor(Math.random() * ingredientOptions.length);
+            const methodIndex = Math.floor(Math.random() * methodOptions.length);
+            const selectedIngredient = ingredientOptions[ingredientIndex];
+            const selectedMethod = methodOptions[methodIndex];
+            
+            // 计算旋转角度
+            const ingredientAnglePerSection = 360 / ingredientOptions.length;
+            const methodAnglePerSection = 360 / methodOptions.length;
+            
+            // 计算选中选项的中心角度
+            const ingredientAngleCenter = ingredientIndex * ingredientAnglePerSection + ingredientAnglePerSection / 2;
+            const methodAngleCenter = methodIndex * methodAnglePerSection + methodAnglePerSection / 2;
+            
+            // 计算需要的旋转角度
+            const fullTurns = 5;
+            const ingredientTargetAngle = fullTurns * 360 + (360 - ingredientAngleCenter);
+            const methodTargetAngle = fullTurns * 360 + (360 - methodAngleCenter);
+            
+            // 应用旋转动画
+            const ingredientWheel = document.getElementById('ingredient-wheel');
+            const methodWheel = document.getElementById('method-wheel');
+            
+            ingredientWheel.style.transition = 'transform 3s cubic-bezier(0.2, 0.8, 0.3, 1)';
+            methodWheel.style.transition = 'transform 3s cubic-bezier(0.2, 0.8, 0.3, 1)';
+            
+            ingredientWheel.style.transform = `translate(-50%, -50%) rotate(${ingredientTargetAngle}deg)`;
+            methodWheel.style.transform = `translate(-50%, -50%) rotate(${methodTargetAngle}deg)`;
+            
+            // 更新结果显示
+            setTimeout(() => {
+                document.getElementById('ingredient-selection').textContent = selectedIngredient;
+                document.getElementById('method-selection').textContent = selectedMethod;
+                
+                currentIngredient = selectedIngredient;
+                currentMethod = selectedMethod;
+                
+                // 启用按钮
+                document.getElementById('spin-ingredient').disabled = false;
+                document.getElementById('spin-method').disabled = false;
+                document.getElementById('spin-both').disabled = false;
+                isSpinning = false;
+                
+                // 更新最终推荐
+                updateFinalRecommendation();
+                
+                // 添加庆祝动画
+                const finalRecommendation = document.getElementById('final-recommendation');
+                finalRecommendation.classList.add('celebration');
+                setTimeout(() => finalRecommendation.classList.remove('celebration'), 1500);
+            }, 3000);
+        }
+        
+        // 更新最终推荐
+        function updateFinalRecommendation() {
+            if (currentIngredient && currentMethod) {
+                const dishKey = `${currentIngredient}-${currentMethod}`;
+                const dishName = dishRecommendations[dishKey] || `${currentIngredient} ${currentMethod}`;
+                
+                const finalRecommendation = document.getElementById('final-recommendation');
+                finalRecommendation.innerHTML = `
+                    <div style="margin-bottom: 10px;">Today's Recommended Dish</div>
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">${dishName}</div>
+                    <div style="font-size: 1.2rem;">
+                        <span class="food-item">${currentIngredient}</span> + 
+                        <span class="cooking-method">${currentMethod}</span>
+                    </div>
+                `;
+                
+                // 更新地图
+                updateMapBasedOnFood(currentIngredient, currentMethod);
+            }
+        }
+        
+        // 根据食物更新地图
+        function updateMapBasedOnFood(food, method) {
+            const mapContainer = document.getElementById('google-maps-container');
+            let mapUrl = "";
+            
+            // 根据食物选择不同的地图位置（示例）
+            if (food.includes('Chicken') && method.includes('Frying')) {
+                mapUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.18379247548!2d-73.98554268459418!3d40.757974679327!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1618335154373!5m2!1sen!2sus';
+            } else if (food.includes('Beef')) {
+                mapUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.681667617988!2d-122.41941518468177!3d37.77492977975902!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8085808c7b6f5c1f%3A0x3fd5b6a4f3c8e3f5!2sGolden%20Gate%20Bridge!5e0!3m2!1sen!2sus!4v1618335245678!5m2!1sen!2sus';
+            } else if (food.includes('Seafood')) {
+                mapUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119066.41248947742!2d-0.3817856377737839!3d51.52855824285741!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47d8a00baf21de75%3A0x52963a5addd52a99!2sLondon!5e0!3m2!1sen!2sus!4v1618335284347!5m2!1sen!2sus';
+            } else {
+                mapUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.680487885226!2d-0.1277583842294097!3d51.500729179634!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604c38c8cd1d9%3A0xb78f2474b9a45aa9!2sBig%20Ben!5e0!3m2!1sen!2sus!4v1618335284347!5m2!1sen!2sus';
+            }
+            
+            // 更新iframe的src属性
+            const iframe = mapContainer.querySelector('iframe');
+            iframe.src = mapUrl;
+            
+            // 显示通知
+            console.log(`Map updated to show nearby ${food} ${method} restaurants!`);
+        }
+        
+        // 重置所有选择
+        function resetAll() {
+            currentIngredient = null;
+            currentMethod = null;
+            
+            document.getElementById('ingredient-selection').textContent = 'Waiting for spin...';
+            document.getElementById('method-selection').textContent = 'Waiting for spin...';
+            
+            document.getElementById('final-recommendation').innerHTML = 'Please spin both wheels first to get dish recommendations';
+            
+            // 重置转盘位置
+            const ingredientWheel = document.getElementById('ingredient-wheel');
+            const methodWheel = document.getElementById('method-wheel');
+            
+            ingredientWheel.style.transition = 'transform 0.5s ease-out';
+            methodWheel.style.transition = 'transform 0.5s ease-out';
+            
+            ingredientWheel.style.transform = 'translate(-50%, -50%) rotate(0deg)';
+            methodWheel.style.transform = 'translate(-50%, -50%) rotate(0deg)';
+            
+            // 重置地图到默认位置
+            const mapContainer = document.getElementById('google-maps-container');
+            const iframe = mapContainer.querySelector('iframe');
+            iframe.src = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.18379247548!2d-73.98554268459418!3d40.757974679327!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1618335154373!5m2!1sen!2sus';
+        }
+    </script>
+</body>
+</html>
